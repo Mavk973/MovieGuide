@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MovieGuide</string>
+    <string name="popular_movies">Популярные фильмы</string>
+    <string name="movie_details">Детали фильма</string>
+    <string name="back">Назад</string>
+    <string name="watch_trailer">Смотреть трейлер</string>
+    <string name="description">Описание</string>
+    <string name="cast">В главных ролях</string>
+    <string name="error">Ошибка</string>
+    <string name="retry">Повторить</string>
+    <string name="no_description">Описание отсутствует</string>
+    <string name="minutes">мин</string>
+</resources>
