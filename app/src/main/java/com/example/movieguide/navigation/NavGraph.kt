@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.movieguide.ui.screen.ActorDetailScreen
 import com.example.movieguide.ui.screen.FavoritesScreen
 import com.example.movieguide.ui.screen.ForgotPasswordScreen
 import com.example.movieguide.ui.screen.LoginScreen
@@ -27,6 +28,9 @@ sealed class Screen(val route: String) {
     object Movies : Screen("movies")
     object MovieDetail : Screen("movie_detail/{movieId}") {
         fun createRoute(movieId: Int) = "movie_detail/$movieId"
+    }
+    object ActorDetail : Screen("actor_detail/{actorId}") {
+        fun createRoute(actorId: Int) = "actor_detail/$actorId"
     }
     object Profile : Screen("profile")
     object Favorites : Screen("favorites")
@@ -145,10 +149,40 @@ fun NavGraph(
                     movieId = movieId,
                     onBackClick = {
                         navController.popBackStack()
+                    },
+                    onActorClick = { actorId ->
+                        navController.navigate(Screen.ActorDetail.createRoute(actorId))
                     }
                 )
             } else {
                 // Если movieId невалиден, возвращаемся назад
+                LaunchedEffect(Unit) {
+                    navController.popBackStack()
+                }
+            }
+        }
+
+        composable(
+            route = Screen.ActorDetail.route,
+            arguments = listOf(
+                navArgument("actorId") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            val actorId = backStackEntry.arguments?.getInt("actorId") ?: 0
+            if (actorId > 0) {
+                ActorDetailScreen(
+                    actorId = actorId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onMovieClick = { movieId ->
+                        navController.navigate(Screen.MovieDetail.createRoute(movieId))
+                    }
+                )
+            } else {
+                // Если actorId невалиден, возвращаемся назад
                 LaunchedEffect(Unit) {
                     navController.popBackStack()
                 }

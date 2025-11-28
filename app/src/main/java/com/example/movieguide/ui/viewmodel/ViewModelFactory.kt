@@ -28,3 +28,15 @@ class MovieDetailViewModelFactory(
     }
 }
 
+class ActorDetailViewModelFactory(
+    private val application: Application
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ActorDetailViewModel::class.java)) {
+            return ActorDetailViewModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+

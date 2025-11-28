@@ -3,6 +3,7 @@ package com.example.movieguide.data.repository
 import com.example.movieguide.BuildConfig
 import com.example.movieguide.data.api.RetrofitClient
 import com.example.movieguide.data.api.TmdbApi
+import com.example.movieguide.data.model.ActorDetail
 import com.example.movieguide.data.model.Cast
 import com.example.movieguide.data.model.Genre
 import com.example.movieguide.data.model.Movie
@@ -97,6 +98,32 @@ class MovieRepository {
                 Result.success(response.body()!!.genres)
             } else {
                 Result.failure(Exception("Failed to fetch genres: ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getActorDetails(actorId: Int): Result<ActorDetail> {
+        return try {
+            val response = api.getActorDetails(actorId, BuildConfig.TMDB_API_KEY)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("Failed to fetch actor details: ${response.message()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun getActorMovieCredits(actorId: Int): Result<List<Movie>> {
+        return try {
+            val response = api.getActorMovieCredits(actorId, BuildConfig.TMDB_API_KEY)
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!.cast)
+            } else {
+                Result.failure(Exception("Failed to fetch actor movies: ${response.message()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)

@@ -1,5 +1,7 @@
 package com.example.movieguide.data.api
 
+import com.example.movieguide.data.model.ActorDetail
+import com.example.movieguide.data.model.ActorMovieCredits
 import com.example.movieguide.data.model.CreditsResponse
 import com.example.movieguide.data.model.Genre
 import com.example.movieguide.data.model.GenresResponse
@@ -61,5 +63,19 @@ interface TmdbApi {
         @Query("api_key") apiKey: String,
         @Query("language") language: String = "ru-RU"
     ): Response<GenresResponse>
+
+    @GET("person/{id}")
+    suspend fun getActorDetails(
+        @Path("id") actorId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String = "ru-RU"
+    ): Response<ActorDetail>
+
+    @GET("person/{id}/movie_credits")
+    suspend fun getActorMovieCredits(
+        @Path("id") actorId: Int,
+        @Query("api_key") apiKey: String,
+        @Query("language") language: String = "ru-RU"
+    ): Response<ActorMovieCredits>
 }
 

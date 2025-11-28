@@ -53,6 +53,7 @@ import com.example.movieguide.ui.viewmodel.MovieDetailViewModelFactory
 fun MovieDetailScreen(
     movieId: Int,
     onBackClick: () -> Unit,
+    onActorClick: (Int) -> Unit = {},
     viewModel: MovieDetailViewModel = viewModel(
         factory = MovieDetailViewModelFactory(LocalContext.current.applicationContext as android.app.Application)
     )
@@ -78,7 +79,8 @@ fun MovieDetailScreen(
                     videos = state.videos,
                     isFavorite = isFavorite,
                     onBackClick = onBackClick,
-                    onFavoriteClick = { viewModel.toggleFavorite(state.movieDetail) }
+                    onFavoriteClick = { viewModel.toggleFavorite(state.movieDetail) },
+                    onActorClick = onActorClick
                 )
             }
             is MovieDetailUiState.Error -> {
@@ -100,7 +102,8 @@ fun MovieDetailContent(
     videos: List<Video>,
     isFavorite: Boolean,
     onBackClick: () -> Unit,
-    onFavoriteClick: () -> Unit
+    onFavoriteClick: () -> Unit,
+    onActorClick: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -344,7 +347,10 @@ fun MovieDetailContent(
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         items(cast.take(10)) { castMember ->
-                            CastItem(cast = castMember)
+                            CastItem(
+                                cast = castMember,
+                                onClick = { onActorClick(castMember.id) }
+                            )
                         }
                     }
                 }
@@ -356,9 +362,14 @@ fun MovieDetailContent(
 }
 
 @Composable
-fun CastItem(cast: Cast) {
+fun CastItem(
+    cast: Cast,
+    onClick: () -> Unit = {}
+) {
     Column(
-        modifier = Modifier.width(120.dp),
+        modifier = Modifier
+            .width(120.dp)
+            .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Profile image with border
