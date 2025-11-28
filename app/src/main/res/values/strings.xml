@@ -10,4 +10,59 @@
     <string name="retry">Повторить</string>
     <string name="no_description">Описание отсутствует</string>
     <string name="minutes">мин</string>
+    
+    <!-- Profile Screen -->
+    <string name="profile">Профиль</string>
+    <string name="user">Пользователь</string>
+    <string name="email">Email</string>
+    <string name="user_id">ID пользователя</string>
+    <string name="sign_out">Выйти из аккаунта</string>
+    <string name="sign_out_title">Выход</string>
+    <string name="sign_out_message">Вы уверены, что хотите выйти?</string>
+    <string name="sign_out_confirm">Выйти</string>
+    <string name="cancel">Отмена</string>
+    <string name="not_authorized">Пользователь не авторизован</string>
+    <string name="avatar">Аватар</string>
+    <string name="language">Язык</string>
+    <string name="select_language">Выберите язык</string>
+    <string name="theme">Тема</string>
+    <string name="select_theme">Выберите тему</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+    <string name="theme_system">Системная</string>
+    
+    <!-- Login Screen -->
+    <string name="welcome">Добро пожаловать!</string>
+    <string name="login_subtitle">Войдите в свой аккаунт</string>
+    <string name="password">Пароль</string>
+    <string name="show_password">Показать пароль</string>
+    <string name="hide_password">Скрыть пароль</string>
+    <string name="forgot_password">Забыли пароль?</string>
+    <string name="login">Войти</string>
+    <string name="no_account">Нет аккаунта? </string>
+    <string name="register">Зарегистрироваться</string>
+    
+    <!-- Register Screen -->
+    <string name="create_account">Создать аккаунт</string>
+    <string name="register_subtitle">Заполните форму для регистрации</string>
+    <string name="name">Имя</string>
+    <string name="confirm_password">Подтвердите пароль</string>
+    <string name="passwords_not_match">Пароли не совпадают</string>
+    <string name="password_min_length">Пароль должен содержать минимум 6 символов</string>
+    <string name="already_have_account">Уже есть аккаунт? </string>
+    
+    <!-- Forgot Password Screen -->
+    <string name="password_recovery">Восстановление пароля</string>
+    <string name="forgot_password_title">Забыли пароль?</string>
+    <string name="forgot_password_subtitle">Введите ваш email, и мы отправим вам инструкции по восстановлению пароля.</string>
+    <string name="send">Отправить</string>
+    <string name="email_sent">Письмо отправлено!</string>
+    <string name="email_sent_message">Проверьте свою почту и следуйте инструкциям для восстановления пароля.</string>
+    <string name="back_to_login">Вернуться к входу</string>
+    
+    <!-- Movies Screen -->
+    <string name="loading_error">Ошибка загрузки</string>
+    
+    <!-- Movie Detail Screen -->
+    <string name="id">ID</string>
 </resources>

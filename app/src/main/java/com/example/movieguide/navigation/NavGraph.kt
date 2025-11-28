@@ -1,33 +1,132 @@
 package com.example.movieguide.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.movieguide.ui.screen.FavoritesScreen
+import com.example.movieguide.ui.screen.ForgotPasswordScreen
+import com.example.movieguide.ui.screen.LoginScreen
 import com.example.movieguide.ui.screen.MovieDetailScreen
 import com.example.movieguide.ui.screen.MoviesScreen
+import com.example.movieguide.ui.screen.ProfileScreen
+import com.example.movieguide.ui.screen.RegisterScreen
+import com.example.movieguide.ui.viewmodel.AuthViewModel
+import com.example.movieguide.ui.viewmodel.AuthUiState
 
 sealed class Screen(val route: String) {
+    object Login : Screen("login")
+    object Register : Screen("register")
+    object ForgotPassword : Screen("forgot_password")
     object Movies : Screen("movies")
     object MovieDetail : Screen("movie_detail/{movieId}") {
         fun createRoute(movieId: Int) = "movie_detail/$movieId"
     }
+    object Profile : Screen("profile")
+    object Favorites : Screen("favorites")
 }
 
 @Composable
-fun NavGraph() {
+fun NavGraph(
+    onLanguageChanged: ((String) -> Unit)? = null,
+    onThemeChanged: ((String) -> Unit)? = null
+) {
     val navController = rememberNavController()
+    val authViewModel: AuthViewModel = viewModel()
+    val authState by authViewModel.authState.collectAsState()
+
+    // Определяем стартовый экран на основе состояния аутентификации
+    val startDestination = when (authState) {
+        is AuthUiState.Authenticated -> Screen.Movies.route
+        is AuthUiState.Unauthenticated -> Screen.Login.route
+        else -> Screen.Login.route
+    }
+
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthUiState.Authenticated -> {
+                // Если пользователь авторизован и находится на экране входа/регистрации, переходим на главный экран
+                val currentRoute = navController.currentDestination?.route
+                if (currentRoute == Screen.Login.route || 
+                    currentRoute == Screen.Register.route ||
+                    currentRoute == Screen.ForgotPassword.route) {
+                    navController.navigate(Screen.Movies.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+            }
+            is AuthUiState.Unauthenticated -> {
+                // Если пользователь не авторизован и находится на защищенных экранах, переходим на экран входа
+                val currentRoute = navController.currentDestination?.route
+                if (currentRoute != Screen.Login.route && 
+                    currentRoute != Screen.Register.route &&
+                    currentRoute != Screen.ForgotPassword.route) {
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Movies.route
+        startDestination = startDestination
     ) {
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(Screen.Movies.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateToRegister = {
+                    navController.navigate(Screen.Register.route)
+                },
+                onForgotPassword = {
+                    navController.navigate(Screen.ForgotPassword.route)
+                },
+                viewModel = authViewModel
+            )
+        }
+
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(Screen.Movies.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = {
+                    navController.popBackStack()
+                },
+                viewModel = authViewModel
+            )
+        }
+
+        composable(Screen.ForgotPassword.route) {
+            ForgotPasswordScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                viewModel = authViewModel
+            )
+        }
+
         composable(Screen.Movies.route) {
             MoviesScreen(
                 onMovieClick = { movieId ->
                     navController.navigate(Screen.MovieDetail.createRoute(movieId))
+                },
+                onProfileClick = {
+                    navController.navigate(Screen.Profile.route)
                 }
             )
         }
@@ -41,10 +140,45 @@ fun NavGraph() {
             )
         ) { backStackEntry ->
             val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
-            MovieDetailScreen(
-                movieId = movieId,
+            if (movieId > 0) {
+                MovieDetailScreen(
+                    movieId = movieId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            } else {
+                // Если movieId невалиден, возвращаемся назад
+                LaunchedEffect(Unit) {
+                    navController.popBackStack()
+                }
+            }
+        }
+
+        composable(Screen.Profile.route) {
+            ProfileScreen(
+                onSignOut = {
+                    // Немедленная навигация на экран входа после выхода
+                    navController.navigate(Screen.Login.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onFavoritesClick = {
+                    navController.navigate(Screen.Favorites.route)
+                },
+                onLanguageChanged = onLanguageChanged,
+                onThemeChanged = onThemeChanged,
+                viewModel = authViewModel
+            )
+        }
+
+        composable(Screen.Favorites.route) {
+            FavoritesScreen(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onMovieClick = { movieId ->
+                    navController.navigate(Screen.MovieDetail.createRoute(movieId))
                 }
             )
         }

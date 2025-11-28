@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">MovieGuide</string>
+    <string name="popular_movies">Popular Movies</string>
+    <string name="movie_details">Movie Details</string>
+    <string name="back">Back</string>
+    <string name="watch_trailer">Watch Trailer</string>
+    <string name="description">Description</string>
+    <string name="cast">Cast</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
+    <string name="no_description">No description available</string>
+    <string name="minutes">min</string>
+    
+    <!-- Profile Screen -->
+    <string name="profile">Profile</string>
+    <string name="user">User</string>
+    <string name="email">Email</string>
+    <string name="user_id">User ID</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="sign_out_title">Sign Out</string>
+    <string name="sign_out_message">Are you sure you want to sign out?</string>
+    <string name="sign_out_confirm">Sign Out</string>
+    <string name="cancel">Cancel</string>
+    <string name="not_authorized">User not authorized</string>
+    <string name="avatar">Avatar</string>
+    <string name="language">Language</string>
+    <string name="select_language">Select Language</string>
+    <string name="theme">Theme</string>
+    <string name="select_theme">Select Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    
+    <!-- Login Screen -->
+    <string name="welcome">Welcome!</string>
+    <string name="login_subtitle">Sign in to your account</string>
+    <string name="password">Password</string>
+    <string name="show_password">Show password</string>
+    <string name="hide_password">Hide password</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="login">Sign In</string>
+    <string name="no_account">Don\'t have an account? </string>
+    <string name="register">Sign Up</string>
+    
+    <!-- Register Screen -->
+    <string name="create_account">Create Account</string>
+    <string name="register_subtitle">Fill in the form to register</string>
+    <string name="name">Name</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="passwords_not_match">Passwords do not match</string>
+    <string name="password_min_length">Password must contain at least 6 characters</string>
+    <string name="already_have_account">Already have an account? </string>
+    
+    <!-- Forgot Password Screen -->
+    <string name="password_recovery">Password Recovery</string>
+    <string name="forgot_password_title">Forgot Password?</string>
+    <string name="forgot_password_subtitle">Enter your email and we will send you instructions to reset your password.</string>
+    <string name="send">Send</string>
+    <string name="email_sent">Email Sent!</string>
+    <string name="email_sent_message">Check your email and follow the instructions to reset your password.</string>
+    <string name="back_to_login">Back to Login</string>
+    
+    <!-- Movies Screen -->
+    <string name="loading_error">Loading Error</string>
+    
+    <!-- Movie Detail Screen -->
+    <string name="id">ID</string>
+</resources>
+

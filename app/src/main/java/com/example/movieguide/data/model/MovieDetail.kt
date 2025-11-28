@@ -23,3 +23,7 @@ data class Genre(
     val name: String
 )
 
+data class GenresResponse(
+    val genres: List<Genre>
+)
+

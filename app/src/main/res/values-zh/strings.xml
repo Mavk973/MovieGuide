@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">MovieGuide</string>
+    <string name="popular_movies">热门电影</string>
+    <string name="movie_details">电影详情</string>
+    <string name="back">返回</string>
+    <string name="watch_trailer">观看预告片</string>
+    <string name="description">描述</string>
+    <string name="cast">主演</string>
+    <string name="error">错误</string>
+    <string name="retry">重试</string>
+    <string name="no_description">无描述</string>
+    <string name="minutes">分钟</string>
+    
+    <!-- Profile Screen -->
+    <string name="profile">个人资料</string>
+    <string name="user">用户</string>
+    <string name="email">电子邮件</string>
+    <string name="user_id">用户ID</string>
+    <string name="sign_out">退出登录</string>
+    <string name="sign_out_title">退出</string>
+    <string name="sign_out_message">您确定要退出吗？</string>
+    <string name="sign_out_confirm">退出</string>
+    <string name="cancel">取消</string>
+    <string name="not_authorized">用户未授权</string>
+    <string name="avatar">头像</string>
+    <string name="language">语言</string>
+    <string name="select_language">选择语言</string>
+    <string name="theme">主题</string>
+    <string name="select_theme">选择主题</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+    <string name="theme_system">系统</string>
+    
+    <!-- Login Screen -->
+    <string name="welcome">欢迎！</string>
+    <string name="login_subtitle">登录您的账户</string>
+    <string name="password">密码</string>
+    <string name="show_password">显示密码</string>
+    <string name="hide_password">隐藏密码</string>
+    <string name="forgot_password">忘记密码？</string>
+    <string name="login">登录</string>
+    <string name="no_account">没有账户？ </string>
+    <string name="register">注册</string>
+    
+    <!-- Register Screen -->
+    <string name="create_account">创建账户</string>
+    <string name="register_subtitle">填写表单进行注册</string>
+    <string name="name">姓名</string>
+    <string name="confirm_password">确认密码</string>
+    <string name="passwords_not_match">密码不匹配</string>
+    <string name="password_min_length">密码必须至少包含6个字符</string>
+    <string name="already_have_account">已有账户？ </string>
+    
+    <!-- Forgot Password Screen -->
+    <string name="password_recovery">密码恢复</string>
+    <string name="forgot_password_title">忘记密码？</string>
+    <string name="forgot_password_subtitle">输入您的电子邮件，我们将向您发送重置密码的说明。</string>
+    <string name="send">发送</string>
+    <string name="email_sent">邮件已发送！</string>
+    <string name="email_sent_message">请检查您的电子邮件并按照说明重置密码。</string>
+    <string name="back_to_login">返回登录</string>
+    
+    <!-- Movies Screen -->
+    <string name="loading_error">加载错误</string>
+    
+    <!-- Movie Detail Screen -->
+    <string name="id">ID</string>
+</resources>
+

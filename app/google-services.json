@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "676976430528",
+    "project_id": "moviegid-fd131",
+    "storage_bucket": "moviegid-fd131.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676976430528:android:fe001c4b7249177efa8c25",
+        "android_client_info": {
+          "package_name": "com.example.movieguide"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWEH6fN7WEGyrgduWKziK5yDw8o_fwds0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676976430528:android:1ec3c26c85cb982dfa8c25",
+        "android_client_info": {
+          "package_name": "moviegid.good"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWEH6fN7WEGyrgduWKziK5yDw8o_fwds0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

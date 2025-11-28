@@ -1,0 +1,69 @@
+<resources>
+    <string name="app_name">MovieGuide</string>
+    <string name="popular_movies">Films populaires</string>
+    <string name="movie_details">Détails du film</string>
+    <string name="back">Retour</string>
+    <string name="watch_trailer">Regarder la bande-annonce</string>
+    <string name="description">Description</string>
+    <string name="cast">Distribution</string>
+    <string name="error">Erreur</string>
+    <string name="retry">Réessayer</string>
+    <string name="no_description">Aucune description disponible</string>
+    <string name="minutes">min</string>
+    
+    <!-- Profile Screen -->
+    <string name="profile">Profil</string>
+    <string name="user">Utilisateur</string>
+    <string name="email">E-mail</string>
+    <string name="user_id">ID utilisateur</string>
+    <string name="sign_out">Se déconnecter</string>
+    <string name="sign_out_title">Déconnexion</string>
+    <string name="sign_out_message">Êtes-vous sûr de vouloir vous déconnecter?</string>
+    <string name="sign_out_confirm">Se déconnecter</string>
+    <string name="cancel">Annuler</string>
+    <string name="not_authorized">Utilisateur non autorisé</string>
+    <string name="avatar">Avatar</string>
+    <string name="language">Langue</string>
+    <string name="select_language">Sélectionner la langue</string>
+    <string name="theme">Thème</string>
+    <string name="select_theme">Sélectionner le thème</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="theme_system">Système</string>
+    
+    <!-- Login Screen -->
+    <string name="welcome">Bienvenue!</string>
+    <string name="login_subtitle">Connectez-vous à votre compte</string>
+    <string name="password">Mot de passe</string>
+    <string name="show_password">Afficher le mot de passe</string>
+    <string name="hide_password">Masquer le mot de passe</string>
+    <string name="forgot_password">Mot de passe oublié?</string>
+    <string name="login">Se connecter</string>
+    <string name="no_account">Pas de compte? </string>
+    <string name="register">S\'inscrire</string>
+    
+    <!-- Register Screen -->
+    <string name="create_account">Créer un compte</string>
+    <string name="register_subtitle">Remplissez le formulaire pour vous inscrire</string>
+    <string name="name">Nom</string>
+    <string name="confirm_password">Confirmer le mot de passe</string>
+    <string name="passwords_not_match">Les mots de passe ne correspondent pas</string>
+    <string name="password_min_length">Le mot de passe doit contenir au moins 6 caractères</string>
+    <string name="already_have_account">Vous avez déjà un compte? </string>
+    
+    <!-- Forgot Password Screen -->
+    <string name="password_recovery">Récupération du mot de passe</string>
+    <string name="forgot_password_title">Mot de passe oublié?</string>
+    <string name="forgot_password_subtitle">Entrez votre e-mail et nous vous enverrons les instructions pour réinitialiser votre mot de passe.</string>
+    <string name="send">Envoyer</string>
+    <string name="email_sent">E-mail envoyé!</string>
+    <string name="email_sent_message">Vérifiez votre e-mail et suivez les instructions pour réinitialiser votre mot de passe.</string>
+    <string name="back_to_login">Retour à la connexion</string>
+    
+    <!-- Movies Screen -->
+    <string name="loading_error">Erreur de chargement</string>
+    
+    <!-- Movie Detail Screen -->
+    <string name="id">ID</string>
+</resources>
+
