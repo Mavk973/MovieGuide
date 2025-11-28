@@ -82,6 +82,26 @@ fun ProfileScreen(
                     onFavoritesClick = onFavoritesClick,
                     onLanguageClick = { showLanguageDialog = true },
                     onThemeClick = { showThemeDialog = true },
+                    isGuest = false,
+                    modifier = Modifier.padding(paddingValues)
+                )
+            }
+            is AuthUiState.Guest -> {
+                val guestUser = com.example.movieguide.data.model.User(
+                    id = "guest",
+                    email = "",
+                    displayName = "Гость"
+                )
+                ProfileContent(
+                    user = guestUser,
+                    onSignOutClick = { 
+                        viewModel.signOut()
+                        onSignOut()
+                    },
+                    onFavoritesClick = {},
+                    onLanguageClick = { showLanguageDialog = true },
+                    onThemeClick = { showThemeDialog = true },
+                    isGuest = true,
                     modifier = Modifier.padding(paddingValues)
                 )
             }
@@ -165,6 +185,7 @@ fun ProfileContent(
     onFavoritesClick: () -> Unit,
     onLanguageClick: () -> Unit,
     onThemeClick: () -> Unit,
+    isGuest: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -216,53 +237,57 @@ fun ProfileContent(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Email,
-                        contentDescription = stringResource(R.string.email),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = stringResource(R.string.email),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                if (!isGuest && user.email.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = stringResource(R.string.email),
+                            tint = MaterialTheme.colorScheme.primary
                         )
-                        Text(
-                            text = user.email,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.email),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = user.email,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
+
+                    Divider()
                 }
 
-                Divider()
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = stringResource(R.string.id),
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = stringResource(R.string.user_id),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                if (!isGuest) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = stringResource(R.string.id),
+                            tint = MaterialTheme.colorScheme.primary
                         )
-                        Text(
-                            text = user.id,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.user_id),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                text = user.id,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
             }
@@ -270,43 +295,45 @@ fun ProfileContent(
 
         Spacer(modifier = Modifier.height(16.dp))
         
-        // Favorites card
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onFavoritesClick() },
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            )
-        ) {
-            Row(
+        // Favorites card (hidden for guests)
+        if (!isGuest) {
+            Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Избранное",
-                    tint = MaterialTheme.colorScheme.primary
+                    .clickable { onFavoritesClick() },
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
                 )
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Избранное",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Favorite,
+                        contentDescription = "Избранное",
+                        tint = MaterialTheme.colorScheme.primary
                     )
-                    Text(
-                        text = "Мои избранные фильмы",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Избранное",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "Мои избранные фильмы",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+        }
         
         // Language selection card
         Card(
@@ -391,18 +418,26 @@ fun ProfileContent(
                 .fillMaxWidth()
                 .height(56.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer
+                containerColor = if (isGuest) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.errorContainer
+                },
+                contentColor = if (isGuest) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onErrorContainer
+                }
             )
         ) {
             Icon(
                 imageVector = Icons.Default.ExitToApp,
-                contentDescription = stringResource(R.string.sign_out),
+                contentDescription = if (isGuest) "Выйти из гостевого режима" else stringResource(R.string.sign_out),
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                stringResource(R.string.sign_out),
+                if (isGuest) "Выйти из гостевого режима" else stringResource(R.string.sign_out),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.SemiBold
             )

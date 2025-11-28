@@ -15,6 +15,7 @@ sealed class AuthUiState {
     object Loading : AuthUiState()
     object Unauthenticated : AuthUiState()
     data class Authenticated(val user: User) : AuthUiState()
+    object Guest : AuthUiState()
     data class Error(val message: String) : AuthUiState()
 }
 
@@ -132,10 +133,17 @@ class AuthViewModel(
 
     fun signOut() {
         viewModelScope.launch {
-            authRepository.signOut()
-                .onSuccess {
-                    _authState.value = AuthUiState.Unauthenticated
-                }
+            val currentState = _authState.value
+            if (currentState is AuthUiState.Guest) {
+                // Если пользователь был гостем, просто переводим в неавторизованное состояние
+                _authState.value = AuthUiState.Unauthenticated
+            } else {
+                // Если пользователь был авторизован через Firebase, выходим из Firebase
+                authRepository.signOut()
+                    .onSuccess {
+                        _authState.value = AuthUiState.Unauthenticated
+                    }
+            }
         }
     }
 
@@ -156,6 +164,18 @@ class AuthViewModel(
 
     fun clearAuthResult() {
         _authResult.value = null
+    }
+
+    fun signInAsGuest() {
+        viewModelScope.launch {
+            _authResult.value = null
+            _authState.value = AuthUiState.Guest
+            _authResult.value = AuthResult.Success
+        }
+    }
+
+    fun isGuest(): Boolean {
+        return _authState.value is AuthUiState.Guest
     }
 }
 

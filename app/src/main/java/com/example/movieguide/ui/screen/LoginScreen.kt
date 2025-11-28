@@ -162,6 +162,23 @@ fun LoginScreen(
                     }
                 }
 
+                OutlinedButton(
+                    onClick = {
+                        isLoading = true
+                        viewModel.signInAsGuest()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    enabled = !isLoading
+                ) {
+                    Text(
+                        stringResource(R.string.guest),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,

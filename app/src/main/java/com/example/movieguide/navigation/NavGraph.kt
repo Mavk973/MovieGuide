@@ -48,6 +48,7 @@ fun NavGraph(
     // Определяем стартовый экран на основе состояния аутентификации
     val startDestination = when (authState) {
         is AuthUiState.Authenticated -> Screen.Movies.route
+        is AuthUiState.Guest -> Screen.Movies.route
         is AuthUiState.Unauthenticated -> Screen.Login.route
         else -> Screen.Login.route
     }
@@ -56,6 +57,17 @@ fun NavGraph(
         when (authState) {
             is AuthUiState.Authenticated -> {
                 // Если пользователь авторизован и находится на экране входа/регистрации, переходим на главный экран
+                val currentRoute = navController.currentDestination?.route
+                if (currentRoute == Screen.Login.route || 
+                    currentRoute == Screen.Register.route ||
+                    currentRoute == Screen.ForgotPassword.route) {
+                    navController.navigate(Screen.Movies.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
+                }
+            }
+            is AuthUiState.Guest -> {
+                // Если пользователь вошел как гость и находится на экране входа/регистрации, переходим на главный экран
                 val currentRoute = navController.currentDestination?.route
                 if (currentRoute == Screen.Login.route || 
                     currentRoute == Screen.Register.route ||
@@ -207,14 +219,23 @@ fun NavGraph(
         }
 
         composable(Screen.Favorites.route) {
-            FavoritesScreen(
-                onBackClick = {
+            // Проверяем, что пользователь не гость
+            val currentAuthState = authState
+            if (currentAuthState is AuthUiState.Guest) {
+                // Если гость пытается зайти на экран избранного, возвращаем его назад
+                LaunchedEffect(Unit) {
                     navController.popBackStack()
-                },
-                onMovieClick = { movieId ->
-                    navController.navigate(Screen.MovieDetail.createRoute(movieId))
                 }
-            )
+            } else {
+                FavoritesScreen(
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onMovieClick = { movieId ->
+                        navController.navigate(Screen.MovieDetail.createRoute(movieId))
+                    }
+                )
+            }
         }
     }
 }

@@ -41,6 +41,7 @@
     <string name="login">Войти</string>
     <string name="no_account">Нет аккаунта? </string>
     <string name="register">Зарегистрироваться</string>
+    <string name="guest">Гость</string>
     
     <!-- Register Screen -->
     <string name="create_account">Создать аккаунт</string>

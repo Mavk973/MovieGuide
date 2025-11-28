@@ -38,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.movieguide.R
+import com.example.movieguide.ui.viewmodel.AuthViewModel
+import com.example.movieguide.ui.viewmodel.AuthUiState
 import coil.request.ImageRequest
 import com.example.movieguide.data.api.RetrofitClient
 import com.example.movieguide.data.model.Cast
@@ -56,10 +58,13 @@ fun MovieDetailScreen(
     onActorClick: (Int) -> Unit = {},
     viewModel: MovieDetailViewModel = viewModel(
         factory = MovieDetailViewModelFactory(LocalContext.current.applicationContext as android.app.Application)
-    )
+    ),
+    authViewModel: AuthViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
+    val authState by authViewModel.authState.collectAsState()
+    val isGuest = authState is AuthUiState.Guest
 
     LaunchedEffect(movieId) {
         viewModel.loadMovieDetails(movieId)
@@ -79,8 +84,13 @@ fun MovieDetailScreen(
                     videos = state.videos,
                     isFavorite = isFavorite,
                     onBackClick = onBackClick,
-                    onFavoriteClick = { viewModel.toggleFavorite(state.movieDetail) },
-                    onActorClick = onActorClick
+                    onFavoriteClick = { 
+                        if (!isGuest) {
+                            viewModel.toggleFavorite(state.movieDetail)
+                        }
+                    },
+                    onActorClick = onActorClick,
+                    isGuest = isGuest
                 )
             }
             is MovieDetailUiState.Error -> {
@@ -103,7 +113,8 @@ fun MovieDetailContent(
     isFavorite: Boolean,
     onBackClick: () -> Unit,
     onFavoriteClick: () -> Unit,
-    onActorClick: (Int) -> Unit = {}
+    onActorClick: (Int) -> Unit = {},
+    isGuest: Boolean = false
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -162,27 +173,29 @@ fun MovieDetailContent(
                     )
                 }
                 
-                // Favorite button
-                FloatingActionButton(
-                    onClick = onFavoriteClick,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(16.dp),
-                    containerColor = if (isFavorite) {
-                        MaterialTheme.colorScheme.error.copy(alpha = 0.9f)
-                    } else {
-                        MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
-                    },
-                    contentColor = if (isFavorite) {
-                        MaterialTheme.colorScheme.onError
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
+                // Favorite button (hidden for guests)
+                if (!isGuest) {
+                    FloatingActionButton(
+                        onClick = onFavoriteClick,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(16.dp),
+                        containerColor = if (isFavorite) {
+                            MaterialTheme.colorScheme.error.copy(alpha = 0.9f)
+                        } else {
+                            MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+                        },
+                        contentColor = if (isFavorite) {
+                            MaterialTheme.colorScheme.onError
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                    ) {
+                        Icon(
+                            if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = if (isFavorite) "Удалить из избранного" else "Добавить в избранное"
+                        )
                     }
-                ) {
-                    Icon(
-                        if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = if (isFavorite) "Удалить из избранного" else "Добавить в избранное"
-                    )
                 }
             }
 
