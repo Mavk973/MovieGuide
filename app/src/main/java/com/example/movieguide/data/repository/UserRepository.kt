@@ -30,11 +30,18 @@ class UserRepository {
 
             if (document.exists()) {
                 val user = document.toObject(User::class.java)
-                Result.success(user ?: User())
+                if (user != null && user.id.isNotEmpty()) {
+                    Result.success(user)
+                } else {
+                    // Если документ существует, но не может быть преобразован, возвращаем базовый профиль
+                    Result.success(User(id = userId))
+                }
             } else {
                 Result.success(User(id = userId))
             }
         } catch (e: Exception) {
+            // В случае ошибки (например, нет сети или Firebase не инициализирован),
+            // возвращаем базовый профиль вместо ошибки
             Result.failure(e)
         }
     }

@@ -1,7 +1,9 @@
 package com.example.movieguide.ui.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import android.util.Log
 import com.example.movieguide.data.model.User
 import com.example.movieguide.data.repository.AuthRepository
 import com.example.movieguide.data.repository.UserRepository
@@ -25,9 +27,10 @@ sealed class AuthResult {
 }
 
 class AuthViewModel(
-    private val authRepository: AuthRepository = AuthRepository(),
+    application: Application,
+    private val authRepository: AuthRepository = AuthRepository(application),
     private val userRepository: UserRepository = UserRepository()
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val _authState = MutableStateFlow<AuthUiState>(AuthUiState.Loading)
     val authState: StateFlow<AuthUiState> = _authState.asStateFlow()
@@ -36,54 +39,120 @@ class AuthViewModel(
     val authResult: StateFlow<AuthResult?> = _authResult.asStateFlow()
 
     init {
-        checkAuthState()
-        observeAuthState()
+        try {
+            Log.d(TAG, "AuthViewModel init: начало инициализации")
+            checkAuthState()
+            observeAuthState()
+            Log.d(TAG, "AuthViewModel init: успешно")
+        } catch (e: Exception) {
+            // Если Firebase не инициализирован или произошла другая ошибка,
+            // устанавливаем состояние как неавторизованный
+            Log.e(TAG, "ОШИБКА в AuthViewModel init", e)
+            _authState.value = AuthUiState.Unauthenticated
+            e.printStackTrace()
+        }
+    }
+    
+    companion object {
+        private const val TAG = "AuthViewModel"
     }
 
     private fun checkAuthState() {
         viewModelScope.launch {
-            val currentUser = authRepository.currentUser
-            if (currentUser != null) {
-                loadUserProfile(currentUser.uid)
-            } else {
+            try {
+                Log.d(TAG, "checkAuthState: проверка текущего пользователя")
+                val currentUser = authRepository.currentUser
+                if (currentUser != null) {
+                    Log.d(TAG, "checkAuthState: пользователь найден, загрузка профиля")
+                    loadUserProfile(currentUser.uid)
+                } else {
+                    Log.d(TAG, "checkAuthState: пользователь не найден")
+                    _authState.value = AuthUiState.Unauthenticated
+                }
+            } catch (e: Exception) {
+                // В случае ошибки устанавливаем состояние как неавторизованный
+                Log.e(TAG, "ОШИБКА в checkAuthState", e)
                 _authState.value = AuthUiState.Unauthenticated
+                e.printStackTrace()
             }
         }
     }
 
     private fun observeAuthState() {
-        FirebaseAuth.getInstance().addAuthStateListener { auth ->
-            viewModelScope.launch {
-                val user = auth.currentUser
-                if (user != null) {
-                    loadUserProfile(user.uid)
-                } else {
-                    _authState.value = AuthUiState.Unauthenticated
+        try {
+            Log.d(TAG, "observeAuthState: добавление listener")
+            FirebaseAuth.getInstance().addAuthStateListener { auth ->
+                viewModelScope.launch {
+                    try {
+                        Log.d(TAG, "observeAuthState: изменение состояния аутентификации")
+                        val user = auth.currentUser
+                        if (user != null) {
+                            Log.d(TAG, "observeAuthState: пользователь авторизован")
+                            loadUserProfile(user.uid)
+                        } else {
+                            Log.d(TAG, "observeAuthState: пользователь не авторизован")
+                            _authState.value = AuthUiState.Unauthenticated
+                        }
+                    } catch (e: Exception) {
+                        // В случае ошибки устанавливаем состояние как неавторизованный
+                        Log.e(TAG, "ОШИБКА в observeAuthState listener", e)
+                        _authState.value = AuthUiState.Unauthenticated
+                        e.printStackTrace()
+                    }
                 }
             }
+            Log.d(TAG, "observeAuthState: listener добавлен успешно")
+        } catch (e: Exception) {
+            // Если не удалось добавить listener, устанавливаем состояние как неавторизованный
+            Log.e(TAG, "ОШИБКА при добавлении observeAuthState listener", e)
+            _authState.value = AuthUiState.Unauthenticated
+            e.printStackTrace()
         }
     }
 
     private suspend fun loadUserProfile(userId: String) {
-        userRepository.getUserProfile(userId)
-            .onSuccess { user ->
-                _authState.value = AuthUiState.Authenticated(user)
-            }
-            .onFailure {
-                // Если профиль не найден, создаем базовый профиль
-                val firebaseUser = authRepository.currentUser
-                if (firebaseUser != null) {
-                    val newUser = User(
-                        id = firebaseUser.uid,
-                        email = firebaseUser.email ?: "",
-                        displayName = firebaseUser.displayName ?: ""
-                    )
-                    userRepository.createUserProfile(newUser)
-                    _authState.value = AuthUiState.Authenticated(newUser)
-                } else {
-                    _authState.value = AuthUiState.Unauthenticated
+        try {
+            userRepository.getUserProfile(userId)
+                .onSuccess { user ->
+                    _authState.value = AuthUiState.Authenticated(user)
                 }
-            }
+                .onFailure { exception ->
+                    // Если профиль не найден или произошла ошибка, создаем базовый профиль
+                    try {
+                        val firebaseUser = authRepository.currentUser
+                        if (firebaseUser != null) {
+                            val newUser = User(
+                                id = firebaseUser.uid,
+                                email = firebaseUser.email ?: "",
+                                displayName = firebaseUser.displayName ?: ""
+                            )
+                            // Пытаемся создать профиль, но не ждем результата
+                            userRepository.createUserProfile(newUser)
+                            _authState.value = AuthUiState.Authenticated(newUser)
+                        } else {
+                            _authState.value = AuthUiState.Unauthenticated
+                        }
+                    } catch (e: Exception) {
+                        // Если не удалось создать профиль, все равно устанавливаем состояние
+                        val firebaseUser = authRepository.currentUser
+                        if (firebaseUser != null) {
+                            val newUser = User(
+                                id = firebaseUser.uid,
+                                email = firebaseUser.email ?: "",
+                                displayName = firebaseUser.displayName ?: ""
+                            )
+                            _authState.value = AuthUiState.Authenticated(newUser)
+                        } else {
+                            _authState.value = AuthUiState.Unauthenticated
+                        }
+                        e.printStackTrace()
+                    }
+                }
+        } catch (e: Exception) {
+            // В случае критической ошибки устанавливаем состояние как неавторизованный
+            _authState.value = AuthUiState.Unauthenticated
+            e.printStackTrace()
+        }
     }
 
     fun signIn(email: String, password: String) {
@@ -176,6 +245,22 @@ class AuthViewModel(
 
     fun isGuest(): Boolean {
         return _authState.value is AuthUiState.Guest
+    }
+
+    fun signInWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _authResult.value = null
+            authRepository.signInWithGoogle(idToken)
+                .onSuccess { firebaseUser ->
+                    loadUserProfile(firebaseUser.uid)
+                    _authResult.value = AuthResult.Success
+                }
+                .onFailure { exception ->
+                    _authResult.value = AuthResult.Error(
+                        exception.message ?: "Ошибка входа через Google"
+                    )
+                }
+        }
     }
 }
 

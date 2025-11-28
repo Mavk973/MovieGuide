@@ -59,7 +59,11 @@ fun MovieDetailScreen(
     viewModel: MovieDetailViewModel = viewModel(
         factory = MovieDetailViewModelFactory(LocalContext.current.applicationContext as android.app.Application)
     ),
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(
+        factory = androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(
+            LocalContext.current.applicationContext as android.app.Application
+        )
+    )
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()

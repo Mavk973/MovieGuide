@@ -66,4 +66,7 @@
     
     <!-- Movie Detail Screen -->
     <string name="id">ID</string>
+    
+    <!-- Google Sign-In -->
+    <string name="default_web_client_id">676976430528-7jehv2i5a3qsd191ia10bgcnu29s4uem.apps.googleusercontent.com</string>
 </resources>

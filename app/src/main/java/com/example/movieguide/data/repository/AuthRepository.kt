@@ -1,11 +1,17 @@
 package com.example.movieguide.data.repository
 
+import android.content.Context
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
+import com.example.movieguide.R
 import kotlinx.coroutines.tasks.await
 
-class AuthRepository {
+class AuthRepository(private val context: Context? = null) {
     private val auth = FirebaseAuth.getInstance()
 
     val currentUser: FirebaseUser?
@@ -83,6 +89,29 @@ class AuthRepository {
         return try {
             auth.sendPasswordResetEmail(email).await()
             Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(Exception(getErrorMessage(e)))
+        }
+    }
+
+    fun getGoogleSignInClient(): GoogleSignInClient? {
+        val context = this.context ?: return null
+        val webClientId = context.getString(R.string.default_web_client_id)
+        if (webClientId.isEmpty() || webClientId == "YOUR_WEB_CLIENT_ID") {
+            return null
+        }
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(webClientId)
+            .requestEmail()
+            .build()
+        return GoogleSignIn.getClient(context, gso)
+    }
+
+    suspend fun signInWithGoogle(idToken: String): Result<FirebaseUser> {
+        return try {
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
+            val result = auth.signInWithCredential(credential).await()
+            Result.success(result.user!!)
         } catch (e: Exception) {
             Result.failure(Exception(getErrorMessage(e)))
         }

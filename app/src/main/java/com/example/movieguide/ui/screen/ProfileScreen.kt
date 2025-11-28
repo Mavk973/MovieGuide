@@ -24,8 +24,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.movieguide.R
 import com.example.movieguide.ui.viewmodel.AuthViewModel
+import android.app.Application
 import com.example.movieguide.ui.viewmodel.AuthUiState
 import com.example.movieguide.utils.LanguageManager
 import com.example.movieguide.utils.ThemeManager
@@ -37,7 +39,11 @@ fun ProfileScreen(
     onFavoritesClick: () -> Unit = {},
     onLanguageChanged: ((String) -> Unit)? = null,
     onThemeChanged: ((String) -> Unit)? = null,
-    viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel = viewModel(
+        factory = ViewModelProvider.AndroidViewModelFactory.getInstance(
+            LocalContext.current.applicationContext as Application
+        )
+    )
 ) {
     val context = LocalContext.current
     val authState by viewModel.authState.collectAsState()

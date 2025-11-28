@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -18,9 +19,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.movieguide.R
+import com.example.movieguide.data.repository.AuthRepository
 import com.example.movieguide.ui.viewmodel.AuthViewModel
+import android.app.Application
+import android.content.Intent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,13 +34,19 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onForgotPassword: () -> Unit,
-    viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel = viewModel(
+        factory = ViewModelProvider.AndroidViewModelFactory.getInstance(
+            LocalContext.current.applicationContext as Application
+        )
+    ),
+    onGoogleSignInRequest: ((Intent, (String?) -> Unit) -> Unit)? = null
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
     val authResult by viewModel.authResult.collectAsState()
 
     LaunchedEffect(authResult) {
@@ -174,6 +186,49 @@ fun LoginScreen(
                 ) {
                     Text(
                         stringResource(R.string.guest),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
+
+                // Разделитель
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    HorizontalDivider(modifier = Modifier.weight(1f))
+                    Text(
+                        text = "или",
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    HorizontalDivider(modifier = Modifier.weight(1f))
+                }
+
+                // Кнопка Google Sign-In
+                OutlinedButton(
+                    onClick = {
+                        val authRepository = AuthRepository(context)
+                        val signInClient = authRepository.getGoogleSignInClient()
+                        if (signInClient != null && onGoogleSignInRequest != null) {
+                            isLoading = true
+                            onGoogleSignInRequest(signInClient.signInIntent) { idToken ->
+                                if (idToken != null) {
+                                    viewModel.signInWithGoogle(idToken)
+                                } else {
+                                    isLoading = false
+                                }
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    enabled = !isLoading && onGoogleSignInRequest != null
+                ) {
+                    Text(
+                        "Войти через Google",
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold
                     )

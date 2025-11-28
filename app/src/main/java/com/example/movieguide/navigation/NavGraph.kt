@@ -1,9 +1,11 @@
 package com.example.movieguide.navigation
 
+import android.app.Application
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,6 +22,7 @@ import com.example.movieguide.ui.screen.ProfileScreen
 import com.example.movieguide.ui.screen.RegisterScreen
 import com.example.movieguide.ui.viewmodel.AuthViewModel
 import com.example.movieguide.ui.viewmodel.AuthUiState
+import com.example.movieguide.ui.viewmodel.AuthViewModelFactory
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
@@ -39,10 +42,16 @@ sealed class Screen(val route: String) {
 @Composable
 fun NavGraph(
     onLanguageChanged: ((String) -> Unit)? = null,
-    onThemeChanged: ((String) -> Unit)? = null
+    onThemeChanged: ((String) -> Unit)? = null,
+    onGoogleSignInRequest: ((android.content.Intent, (String?) -> Unit) -> Unit)? = null
 ) {
     val navController = rememberNavController()
-    val authViewModel: AuthViewModel = viewModel()
+    val context = LocalContext.current
+    val authViewModel: AuthViewModel = viewModel(
+        factory = AuthViewModelFactory(
+            context.applicationContext as Application
+        )
+    )
     val authState by authViewModel.authState.collectAsState()
 
     // Определяем стартовый экран на основе состояния аутентификации
@@ -109,7 +118,8 @@ fun NavGraph(
                 onForgotPassword = {
                     navController.navigate(Screen.ForgotPassword.route)
                 },
-                viewModel = authViewModel
+                viewModel = authViewModel,
+                onGoogleSignInRequest = onGoogleSignInRequest
             )
         }
 
