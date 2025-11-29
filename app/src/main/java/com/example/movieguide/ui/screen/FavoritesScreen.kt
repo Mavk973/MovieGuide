@@ -37,6 +37,7 @@ import com.example.movieguide.ui.theme.MovieGold
 import com.example.movieguide.ui.viewmodel.FavoritesUiState
 import com.example.movieguide.ui.viewmodel.FavoritesViewModel
 import com.example.movieguide.ui.viewmodel.FavoritesViewModelFactory
+import com.example.movieguide.ui.components.ErrorMessage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

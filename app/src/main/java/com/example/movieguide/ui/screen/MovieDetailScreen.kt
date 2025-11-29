@@ -49,6 +49,7 @@ import com.example.movieguide.ui.theme.MovieGold
 import com.example.movieguide.ui.viewmodel.MovieDetailUiState
 import com.example.movieguide.ui.viewmodel.MovieDetailViewModel
 import com.example.movieguide.ui.viewmodel.MovieDetailViewModelFactory
+import com.example.movieguide.ui.components.ErrorMessage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +61,7 @@ fun MovieDetailScreen(
         factory = MovieDetailViewModelFactory(LocalContext.current.applicationContext as android.app.Application)
     ),
     authViewModel: AuthViewModel = viewModel(
-        factory = androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(
+        factory = com.example.movieguide.ui.viewmodel.AuthViewModelFactory(
             LocalContext.current.applicationContext as android.app.Application
         )
     )

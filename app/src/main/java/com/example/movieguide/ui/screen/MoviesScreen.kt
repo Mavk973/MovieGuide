@@ -47,6 +47,7 @@ import com.example.movieguide.data.api.RetrofitClient
 import com.example.movieguide.data.model.Genre
 import com.example.movieguide.data.model.Movie
 import com.example.movieguide.ui.components.ShimmerMovieCard
+import com.example.movieguide.ui.components.ErrorMessage
 import com.example.movieguide.ui.theme.MovieGold
 import com.example.movieguide.ui.viewmodel.MoviesViewModel
 import com.example.movieguide.ui.viewmodel.MoviesUiState
@@ -450,50 +451,4 @@ fun EmptySearchResult(
     }
 }
 
-@Composable
-fun ErrorMessage(
-    message: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .padding(24.dp)
-            .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "⚠️",
-            style = MaterialTheme.typography.displaySmall
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = stringResource(R.string.loading_error),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-        Button(
-            onClick = onRetry,
-            modifier = Modifier.height(48.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        ) {
-            Text(
-                stringResource(R.string.retry),
-                style = MaterialTheme.typography.labelLarge,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-    }
-}
 

@@ -9,6 +9,8 @@ import com.example.movieguide.data.model.MovieDetail
 import com.example.movieguide.data.model.Video
 import com.example.movieguide.data.repository.FavoritesRepository
 import com.example.movieguide.data.repository.MovieRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,29 +44,42 @@ class MovieDetailViewModel(
 
     fun loadMovieDetails(movieId: Int) {
         viewModelScope.launch {
-            _uiState.value = MovieDetailUiState.Loading
-            
-            val movieDetailResult = movieRepository.getMovieDetails(movieId)
-            val creditsResult = movieRepository.getMovieCredits(movieId)
-            val videosResult = movieRepository.getMovieVideos(movieId)
+            try {
+                _uiState.value = MovieDetailUiState.Loading
+                
+                // Выполняем запросы параллельно для лучшей производительности
+                val movieDetailDeferred = async { movieRepository.getMovieDetails(movieId) }
+                val creditsDeferred = async { movieRepository.getMovieCredits(movieId) }
+                val videosDeferred = async { movieRepository.getMovieVideos(movieId) }
+                
+                // Ждем завершения всех запросов
+                val results = awaitAll(movieDetailDeferred, creditsDeferred, videosDeferred)
+                val movieDetailResult = results[0] as Result<MovieDetail>
+                val creditsResult = results[1] as Result<List<Cast>>
+                val videosResult = results[2] as Result<List<Video>>
 
-            when {
-                movieDetailResult.isFailure -> {
-                    _uiState.value = MovieDetailUiState.Error(
-                        movieDetailResult.exceptionOrNull()?.message ?: "Failed to load movie details"
-                    )
-                }
-                else -> {
-                    val movieDetail = movieDetailResult.getOrNull()
-                    if (movieDetail != null) {
-                        val cast = creditsResult.getOrElse { emptyList() }
-                        val videos = videosResult.getOrElse { emptyList() }
-                        
-                        _uiState.value = MovieDetailUiState.Success(movieDetail, cast, videos)
-                    } else {
-                        _uiState.value = MovieDetailUiState.Error("Failed to load movie details")
+                when {
+                    movieDetailResult.isFailure -> {
+                        _uiState.value = MovieDetailUiState.Error(
+                            movieDetailResult.exceptionOrNull()?.message ?: "Failed to load movie details"
+                        )
+                    }
+                    else -> {
+                        val movieDetail = movieDetailResult.getOrNull()
+                        if (movieDetail != null) {
+                            val cast = creditsResult.getOrElse { emptyList() }
+                            val videos = videosResult.getOrElse { emptyList() }
+                            
+                            _uiState.value = MovieDetailUiState.Success(movieDetail, cast, videos)
+                        } else {
+                            _uiState.value = MovieDetailUiState.Error("Failed to load movie details")
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                _uiState.value = MovieDetailUiState.Error(
+                    e.message ?: "An unexpected error occurred"
+                )
             }
         }
         

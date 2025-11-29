@@ -38,6 +38,7 @@ import com.example.movieguide.ui.theme.MovieGold
 import com.example.movieguide.ui.viewmodel.ActorDetailUiState
 import com.example.movieguide.ui.viewmodel.ActorDetailViewModel
 import com.example.movieguide.ui.viewmodel.ActorDetailViewModelFactory
+import com.example.movieguide.ui.components.ErrorMessage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
